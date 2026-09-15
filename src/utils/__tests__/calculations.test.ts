@@ -52,15 +52,17 @@ describe('Special Offer & Bill Calculation Engine', () => {
     expect(summary.finalTotal).toBe(4.15);
   });
 
-  it('should apply multiple discount sets when quantity is doubled (e.g., Bread x6 gives £1.10 discount)', () => {
+  it('should apply Cheese BOGO offer: Cheese x2 => Subtotal £1.80, Savings £0.90, Final £0.90', () => {
+    const cheese = INITIAL_PRODUCTS.find((p) => p.id === 'cheese') as Product;
     const items: CartItem[] = [
-      { product: bread, quantity: 6 }, // 6 x 1.10 = 6.60
+      { product: cheese, quantity: 2 }, // 2 x 0.90 = 1.80
     ];
 
     const summary = calculateBill(items, INITIAL_OFFERS);
 
-    expect(summary.subtotal).toBe(6.60);
-    expect(summary.totalSavings).toBe(1.10); // 2 sets of 3 breads = 2 * 0.55
-    expect(summary.finalTotal).toBe(5.50);
+    expect(summary.subtotal).toBe(1.80);
+    expect(summary.appliedOffers).toHaveLength(1);
+    expect(summary.totalSavings).toBe(0.90); // 2nd cheese free
+    expect(summary.finalTotal).toBe(0.90);
   });
 });
